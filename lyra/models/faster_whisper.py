@@ -23,6 +23,7 @@ class Whisper:
             log_prob_threshold=-0.75,
             beam_size=5,
             patience=2,
+            temperature=0.0,
             log_progress=True
         )
         result = list(segments)
