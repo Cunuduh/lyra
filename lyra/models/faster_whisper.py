@@ -1,5 +1,6 @@
 from faster_whisper import WhisperModel
 import torch
+from ..core.audio_processor import isolate_vocals
 
 class Whisper:
     def __init__(self, model_name="large-v3"):
@@ -12,10 +13,17 @@ class Whisper:
         )
     
     def transcribe(self, audio_path):
+        print("Isolating vocals...")
+        vocals = isolate_vocals(audio_path)
         print("Transcribing...")
         segments, _ = self.model.transcribe(
-            audio=audio_path,
+            audio=vocals,
             word_timestamps=True,
+            hallucination_silence_threshold=1.5,
+            log_prob_threshold=-0.75,
+            beam_size=5,
+            patience=2,
+            log_progress=True
         )
-        result = [segment for segment in segments]
+        result = list(segments)
         return result

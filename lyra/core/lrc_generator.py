@@ -1,9 +1,8 @@
 def generate(metadata, segments, elrc=False):
     lines = [f"[{key}: {value}]" for key, value in metadata.items() if value]
-    
     merged_segments = []
     skip_next = False
-    
+    # remove hallucinated words (words with the same timestamp) and merge the next segment
     for i in range(len(segments)):
         if skip_next:
             skip_next = False
@@ -32,7 +31,7 @@ def generate(metadata, segments, elrc=False):
             
         seg.words = words
         merged_segments.append(seg)
-    
+
     for segment in merged_segments:
         start = format_timestamp(segment.start)
         if not elrc:
@@ -41,9 +40,11 @@ def generate(metadata, segments, elrc=False):
         else:
             timestamped_word = " ".join(f"<{format_timestamp(word.start)}> {word.word.strip()}" for word in segment.words)
             line = f"[{start}] {timestamped_word}"
-        print(line)
         lines.append(line)
-        
+
+    for line in lines:
+        print(line)
+
     return "\n".join(lines)
 
 def format_timestamp(seconds: float) -> str:

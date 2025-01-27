@@ -5,6 +5,7 @@ Lyra is an open-source command-line tool that converts audio files to LRC (synch
 ## Features
 
 - Automatic speech-to-text transcription using Whisper large-v3 model
+- Automatic vocal isolation using Demucs
 - Supports standard LRC and enhanced LRC (eLRC) formats 
 - GPU acceleration when available (CUDA)
 - Metadata support (title, artist, album, lyricist)
@@ -47,3 +48,9 @@ python cli.py audio_file.mp3 --elrc \
 * `--artist, -ar`: Artist name
 * `--album, -al`: Album name
 * `--lyricist, -lr`: Lyricist name
+
+## Accuracy
+
+While Demucs helps to isolate vocals and Whisper provides high-quality transcription, the output will need to be reviewed and edited, especially if there are:
+- Heavy effects on vocals
+- Multiple overlapping voices
