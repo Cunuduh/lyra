@@ -20,7 +20,7 @@ class Whisper:
             audio=vocals,
             word_timestamps=True,
             initial_prompt=prompt,
-            hallucination_silence_threshold=1.0,
+            hallucination_silence_threshold=0.75,
             log_prob_threshold=-0.693,
             beam_size=5,
             patience=2.0,

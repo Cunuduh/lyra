@@ -1,8 +1,8 @@
-import gc
+import av
 import torch
+import torchaudio
 from demucs.pretrained import get_model
 from demucs.apply import apply_model
-import torchaudio
 def downmix(wav):
     num_channels = wav.shape[0]
     
@@ -44,6 +44,18 @@ def isolate_vocals(audio_path):
 
     vocals = sources[0, 3].mean(dim=0, keepdim=True)
 
+    vocals = torchaudio.functional.highpass_biquad(vocals, sr, 200)
+    vocals = torchaudio.functional.lowpass_biquad(vocals, sr, 3000)
+    window_size = int(sr * 0.02)
+    energy = torch.norm(vocals.unfold(-1, window_size, window_size), dim=-1)
+    mask = energy > energy.max() * 0.05
+
+    vocals_filtered = torch.zeros_like(vocals)
+    for i, keep in enumerate(mask.squeeze()):
+        if keep:
+            start = i * window_size
+            end = start + window_size
+            vocals_filtered[..., start:end] = vocals[..., start:end]
     temp_path = 'temp_vocals.wav'
     torchaudio.save(temp_path, vocals, sr)
     
