@@ -6,6 +6,7 @@ from lyra.core.lrc_generator import generate
 def main():
     parser = argparse.ArgumentParser(description="Lyra: Audio to LRC Converter")
     parser.add_argument("audio_path", help="Path to audio file")
+    parser.add_argument("--prompt", "-p", default="", help="Initial prompt with lyrics text")
     parser.add_argument("--elrc", action="store_true", help="Use ELRC format")
     parser.add_argument("--output", "-o", default="output.lrc", help="Output file")
     parser.add_argument("--title", "-ti", default="", help="Song title")
@@ -17,7 +18,7 @@ def main():
 
     whisper = Whisper()
 
-    segments = whisper.transcribe(args.audio_path)
+    segments = whisper.transcribe(args.audio_path, prompt=args.prompt if args.prompt else None)
 
     metadata = {
         "ti": args.title,

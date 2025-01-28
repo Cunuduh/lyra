@@ -12,17 +12,18 @@ class Whisper:
             compute_type="int8"
         )
     
-    def transcribe(self, audio_path):
+    def transcribe(self, audio_path, prompt=None):
         print("Isolating vocals...")
         vocals = isolate_vocals(audio_path)
         print("Transcribing...")
         segments, _ = self.model.transcribe(
             audio=vocals,
             word_timestamps=True,
-            hallucination_silence_threshold=1.5,
+            initial_prompt=prompt,
+            hallucination_silence_threshold=1.0,
             log_prob_threshold=-0.693,
             beam_size=5,
-            patience=2,
+            patience=2.0,
             temperature=0.0,
             log_progress=True
         )
