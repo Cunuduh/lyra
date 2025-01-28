@@ -1,38 +1,7 @@
 def generate(metadata, segments, elrc=False):
     lines = [f"[{key}: {value}]" for key, value in metadata.items() if value]
-    merged_segments = []
-    skip_next = False
-    # remove hallucinated words (words with the same timestamp) and merge the next segment
-    for i in range(len(segments)):
-        if skip_next:
-            skip_next = False
-            continue
 
-        seg = segments[i]
-        words = list(seg.words)
-        
-        timestamps = {}
-        for index, w in enumerate(words):
-            timestamps.setdefault(w.start, []).append(index)
-            
-        remove_indices = set()
-        for indices in timestamps.values():
-            if len(indices) > 1:
-                for index in indices:
-                    remove_indices.add(index)
-                    if index > 0:
-                        remove_indices.add(index - 1)
-        
-        words = [w for i, w in enumerate(words) if i not in remove_indices]
-        
-        if remove_indices and i + 1 < len(segments):
-            words.extend(segments[i + 1].words)
-            skip_next = True
-            
-        seg.words = words
-        merged_segments.append(seg)
-
-    for segment in merged_segments:
+    for segment in segments:
         start = format_timestamp(segment.start)
         if not elrc:
             text = " ".join(w.word.strip() for w in segment.words)

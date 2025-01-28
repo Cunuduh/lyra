@@ -3,7 +3,7 @@ import torch
 from ..core.audio_processor import isolate_vocals
 
 class Whisper:
-    def __init__(self, model_name="large-v3"):
+    def __init__(self, model_name="large-v3-turbo"):
         device = "cuda" if torch.cuda.is_available() else "cpu"
         
         self.model = WhisperModel(
