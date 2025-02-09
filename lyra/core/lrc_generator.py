@@ -1,6 +1,7 @@
 def generate(metadata, segments, elrc=False):
     lines = [f"[{key}: {value}]" for key, value in metadata.items() if value]
-
+    lines.append("")
+    
     for segment in segments:
         start = format_timestamp(segment.start)
         if not elrc:
@@ -15,6 +16,17 @@ def generate(metadata, segments, elrc=False):
         print(line)
 
     return "\n".join(lines)
+def generate_gemini(metadata, gemini, args):
+    result = ""
+    for chunk in gemini.transcribe(args.audio_path):
+        if not result:
+            result = "\n".join(f"[{key}: {value}]" for key, value in metadata.items() if value)
+            result += "\n\n"
+            print(result, end="", flush=True)
+        if chunk.text:
+            result += chunk.text
+            print(chunk.text, end="", flush=True)
+    return result
 
 def format_timestamp(seconds: float) -> str:
     minutes = int(seconds // 60)
